@@ -15,7 +15,7 @@ const useAuthStore = create((set) => ({
         try {
             const res = await api.get('/auth/profile');
             console.log(res.data)
-            set({ authUser: res.data })
+            set({ authUser: res.data.user })
         }
         catch (err) {
             console.log("Erro in CheacjAuth: ", err)
@@ -30,7 +30,8 @@ const useAuthStore = create((set) => ({
             const res = await api.post('/auth/login', data);
             set({ authUser: res.data })
             toast.success("Account Login successfully");
-            localStorage.setItem('token', response.data.token);
+            console.log(res)
+            localStorage.setItem('token', res.data.token);
 
         }
         catch (err) {
@@ -69,7 +70,7 @@ const useAuthStore = create((set) => ({
     updateProfile: async (data) => {
         set({ isUpdatingProfile: true });
         try {
-            const res = await axiosInstance.put("/auth/update-profile", data);
+            const res = await api.put("/auth/update-profile", data);
             set({ authUser: res.data });
             toast.success("Profile updated successfully");
         } catch (error) {
