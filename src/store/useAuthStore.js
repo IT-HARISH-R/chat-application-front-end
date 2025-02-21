@@ -4,6 +4,7 @@ import toast from "react-hot-toast";
 import { io } from "socket.io-client";
 
 const BASE_URL = "https://chat-application-backend-znue.onrender.com/api";
+// const BASE_URL = import.meta.env.MODE === "development" ? "http://localhost:3000" : "/";
 
 export const useAuthStore = create((set, get) => ({
   authUser: null,
@@ -16,6 +17,12 @@ export const useAuthStore = create((set, get) => ({
 
   checkAuth: async () => {
     try {
+
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('Token missing. Please log in.');
+      }
+
       const res = await axiosInstance.get("/auth/check");
 
       set({ authUser: res.data });
@@ -46,6 +53,8 @@ export const useAuthStore = create((set, get) => ({
     set({ isLoggingIn: true });
     try {
       const res = await axiosInstance.post("/auth/login", data);
+      localStorage.setItem('token', res.data.token);
+      // console.log(res.data)
       set({ authUser: res.data });
       toast.success("Logged in successfully");
 
